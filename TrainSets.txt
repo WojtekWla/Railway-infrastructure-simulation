@@ -1,0 +1,2 @@
+Trainset: TS1 current position 1, railroad cars: RRC1 21.0, MFC2 31.0, PRC3 61.0.
+Trainset: TS2 current position 0, railroad cars: RRC4 44.0, TFC5 46.0, PRC6 565.0, EFC7 32.0.
