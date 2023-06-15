@@ -20,8 +20,9 @@ public class Locomotive {
     private int maxNumOfCars;
     private int maxNumOfCarsWithElectricalGrid;
     private int currentNumOfCarsWithElectricity;
+    private int timeInRoad = 1; //1 sec is 10 minutes
     //private List<RailroadCar> railroadCars;
-
+    private int changeSpeedTimer = 0;
 
     public Locomotive(String name, double maxWeight, int maxNumOfCars, int maxNumOfCarsWithElectricalGrid)
     {
@@ -30,11 +31,10 @@ public class Locomotive {
         this.maxNumOfCars = maxNumOfCars;
         this.maxNumOfCarsWithElectricalGrid = maxNumOfCarsWithElectricalGrid;
 
-        speed = 10;
+        speed = 100;
         //railroadCars = new ArrayList<>();
         this.id = "LOC" + numGen++;
     }
-
 
     public static int getNumGen() {
         return numGen;
@@ -104,26 +104,50 @@ public class Locomotive {
         return currentNumOfCarsWithElectricity;
     }
 
+    public int getTimeInRoad() {
+        return timeInRoad;
+    }
+
+    public int getChangeSpeedTimer() {
+        return changeSpeedTimer;
+    }
+
+    public void setChangeSpeedTimer(int changeSpeedTimer) {
+        this.changeSpeedTimer = changeSpeedTimer;
+    }
+
     public void setCurrentNumOfCarsWithElectricity(int currentNumOfCarsWithElectricity) {
         this.currentNumOfCarsWithElectricity = currentNumOfCarsWithElectricity;
     }
 
-    public void changeSpeed()
-    {
-        int r = new Random().nextInt(100) +1;
-        double newSpeed = speed*0.03;
-        if(r <= 50)//increase
-            speed += newSpeed;
-        else //decrease
-        {
-            if(speed < newSpeed)
-                speed = 0;
-            else
-                speed -= newSpeed;
-        }
+    public void setTimeInRoad(int timeInRoad) {
+        this.timeInRoad = timeInRoad;
     }
 
+    public void changeSpeed()
+    {
+            int r = new Random().nextInt(100) + 1;
+            double newSpeed = speed * 0.03;
+            if (r <= 50)//increase
+                speed += newSpeed;
+            else //decrease
+            {
+                if (speed < newSpeed)
+                    speed = 0;
+                else
+                    speed -= newSpeed;
+            }
+            changeSpeedTimer = 0;
 
+            if(speed > 200) {
+                try {
+                    throw new RailroadHazard();
+                }catch (RailroadHazard e)
+                {
+                    System.out.println(e.getMessage());
+                }
+            }
+    }
 
     @Override
     public String toString() {
@@ -135,7 +159,5 @@ public class Locomotive {
                 ", currentNumOfCarsWithElectricity=" + currentNumOfCarsWithElectricity +
                 '}';
     }
-
-
 
 }

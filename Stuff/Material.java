@@ -20,8 +20,4 @@ public class Material extends Stuff{
                 '}';
     }
 
-    public static void main(String[] args) {
-        Material material = new Material(111, Materials.gaseousMaterial);
-        System.out.println(material);
-    }
 }

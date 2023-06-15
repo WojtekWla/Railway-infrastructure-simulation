@@ -98,10 +98,8 @@ public abstract class RailroadCar implements Comparable<RailroadCar>{
 
     @Override
     public int compareTo(RailroadCar o) {
-        if(grossWeight() > o.grossWeight())
-            return 1;
-        else
-            return -1;
+        double g = grossWeight() - o.grossWeight();
+        return (int) g;
     }
 
     @Override
