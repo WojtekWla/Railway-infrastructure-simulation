@@ -17,7 +17,7 @@ public class ReadFromFiles {
         BufferedReader bufferedReader;
 
         try{
-            bufferedReader = new BufferedReader(new FileReader("C:\\Users\\Precision\\Desktop\\szkola\\GUI\\src\\GUI_Project\\stations.txt"));
+            bufferedReader = new BufferedReader(new FileReader("C:\\Users\\Precision\\Desktop\\szkola\\GUI\\GUI_Project\\src\\GUI_Project\\stations.txt"));
             while(bufferedReader.ready())
             {
                 list.add(new Station(bufferedReader.readLine()));
@@ -28,7 +28,7 @@ public class ReadFromFiles {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        System.out.println(list.size());
         return list;
     }
 

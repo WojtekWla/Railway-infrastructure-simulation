@@ -2,16 +2,52 @@ package GUI_Project.Rail;
 
 import GUI_Project.Stuff.Human;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class Station{
-    public static ArrayList<Station> stations = new ArrayList<>();
+    public static Color[] colors = {
+            Color.YELLOW, Color.RED, Color.GREEN, Color.BLUE, Color.CYAN, Color.MAGENTA, Color.ORANGE, Color.PINK,
+            new Color(255, 165, 0), new Color(255, 192, 203), new Color(0, 128, 0), new Color(139, 0, 139),
+            new Color(255, 140, 0), new Color(128, 0, 0), new Color(0, 0, 128), new Color(128, 0, 128),
+            new Color(0, 128, 128), new Color(0, 255, 0), new Color(128, 128, 0), new Color(255, 0, 0),
+            new Color(255, 215, 0), new Color(30, 144, 255), new Color(139, 69, 19), new Color(220, 20, 60),
+            new Color(255, 0, 255), new Color(0, 255, 255), new Color(255, 99, 71), new Color(128, 0, 0),
+            new Color(0, 0, 139), new Color(218, 165, 32), new Color(0, 100, 0), new Color(95, 158, 160),
+            new Color(210, 105, 30), new Color(139, 69, 19), new Color(178, 34, 34), new Color(107, 142, 35),
+            new Color(188, 143, 143), new Color(85, 107, 47), new Color(255, 215, 0), new Color(0, 255, 127),
+            new Color(255, 69, 0), new Color(0, 139, 139), new Color(255, 255, 0), new Color(0, 100, 0),
+            new Color(218, 165, 32), new Color(0, 128, 128), new Color(95, 158, 160), new Color(184, 134, 11),
+            new Color(0, 0, 205), new Color(107, 142, 35), new Color(188, 143, 143), new Color(85, 107, 47),
+            new Color(255, 215, 0), new Color(0, 255, 127), new Color(255, 69, 0), new Color(0, 139, 139),
+            new Color(255, 255, 0), new Color(0, 100, 0), new Color(218, 165, 32), new Color(0, 128, 128),
+            new Color(95, 158, 160), new Color(184, 134, 11), new Color(0, 0, 205), new Color(107, 142, 35),
+            new Color(188, 143, 143), new Color(85, 107, 47), new Color(255, 215, 0), new Color(0, 255, 127),
+            new Color(255, 69, 0), new Color(0, 139, 139), new Color(255, 255, 0), new Color(0, 100, 0),
+            new Color(218, 165, 32), new Color(0, 128, 128), new Color(95, 158, 160), new Color(184, 134, 11),
+            new Color(0, 0, 205), new Color(107, 142, 35), new Color(188, 143, 143), new Color(85, 107, 47),
+            new Color(255, 215, 0), new Color(0, 255, 127), new Color(255, 69, 0), new Color(0, 139, 139),
+            new Color(255, 255, 0), new Color(0, 100, 0), new Color(218, 165, 32), new Color(0, 128, 128),
+            new Color(95, 158, 160), new Color(184, 134, 11), new Color(0, 0, 205), new Color(107, 142, 35),
+            new Color(188, 143, 143), new Color(85, 107, 47), new Color(255, 215, 0), new Color(0, 255, 127),
+            new Color(255, 69, 0), new Color(0, 139, 139), new Color(255, 255, 0), new Color(0, 100, 0),
+            new Color(218, 165, 32), new Color(0, 128, 128), new Color(95, 158, 160), new Color(184, 134, 11),
+            new Color(0, 0, 205), new Color(107, 142, 35), new Color(188, 143, 143), new Color(85, 107, 47),
+            new Color(255, 215, 0), new Color(0, 255, 127), new Color(255, 69, 0), new Color(0, 139, 139),
+            new Color(255, 255, 0), new Color(0, 100, 0), new Color(218, 165, 32), new Color(0, 128, 128),
+            new Color(95, 158, 160), new Color(184, 134, 11), new Color(0, 0, 205), new Color(107, 142, 35)};
 
+    public static int currColor = 0;
+    public static ArrayList<Station> stations = new ArrayList<>();
+    public static Station[][] stationsOnMap = new Station[100][100];
 
     private String name;
     private List<Human> peopleWaitingForTrain;
     private Map<Station, Integer> connectedStations;
     private int maxStationConnections;
+    private boolean drawOnMap;
+    private Color color;
 
 
 
@@ -21,6 +57,8 @@ public class Station{
         peopleWaitingForTrain = new ArrayList<>();
         connectedStations = new HashMap<>();
         maxStationConnections = 2; //new Random().nextInt(3)+3;
+        drawOnMap = false;
+        color = colors[currColor++];
     }
 
     public String getName() {
@@ -39,6 +77,10 @@ public class Station{
         }
     }
 
+    public Color getColor() {
+        return color;
+    }
+
     public Map<Station, Integer> getConnectedStations() {
         return connectedStations;
     }
@@ -49,6 +91,14 @@ public class Station{
 
     public void setConnectedStations(Map<Station, Integer> connectedStations) {
         this.connectedStations = connectedStations;
+    }
+
+    public boolean isDrawOnMap() {
+        return drawOnMap;
+    }
+
+    public void setDrawOnMap(boolean drawOnMap) {
+        this.drawOnMap = drawOnMap;
     }
 
     public static void createRoads(List<Station> stations)
@@ -89,6 +139,9 @@ public class Station{
             }
             System.out.println("max connections: " + station.maxStationConnections + " connected" + station.connectedStations.size());
         }
+
+        System.out.println("End of connecting roads");
+
     }
 
     @Override
@@ -111,9 +164,14 @@ public class Station{
 //        {
 //            toDisplay +=" [" + entry.getKey() + " distance: " + entry.getValue() + "],";
 //        }
+        String[] arr = name.split(" ");
+        String res = "";
+        for (int i = 0; i < arr.length; i++) {
+            res += arr[i].toCharArray()[0];
+        }
 
 
-        return name;
+        return res;
     }
 
 }

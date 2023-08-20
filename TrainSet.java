@@ -1,5 +1,7 @@
 package GUI_Project;
 
+import GUI_Project.Interface.MyTable;
+import GUI_Project.Interface.PanelController;
 import GUI_Project.Rail.Connection;
 import GUI_Project.Rail.Station;
 import GUI_Project.RailroadCars.MixRailroadFreightCar;
@@ -11,12 +13,16 @@ import GUI_Project.Stuff.Material;
 import GUI_Project.Stuff.Stuff;
 import jdk.swing.interop.SwingInterOpUtils;
 
+import javax.swing.*;
 import java.util.*;
 
 public class TrainSet extends Thread{
     public static int identifierGen = 1;
     public static ArrayList<TrainSet> trainSets = new ArrayList<>();
+    public static MyTable myTable = null;
 
+
+    private PanelController panelController;
     private Locomotive locomotive;
     private Station startingStation;
     private Station lastStation;
@@ -30,11 +36,10 @@ public class TrainSet extends Thread{
     private String id;
     private int roadLength;
     private int distanceToNextStation;
-
     private boolean onStation;
     private boolean endOfRoad;
     //private boolean collisionDetected = false;
-//    private int stationTimer;
+    //private int stationTimer;
 
     public Station getCurrentStation() {
         return currentStation;
@@ -48,6 +53,7 @@ public class TrainSet extends Thread{
     {
         this.locomotive = locomotive;
         this.startingStation = startingStation;
+        this.myTable = myTable;
         railroadCars = new ArrayList<>();
         stations = new LinkedHashMap<>();
         id = "TS" + identifierGen++;
@@ -91,6 +97,10 @@ public class TrainSet extends Thread{
         return nextStation;
     }
 
+    public int getDistanceToNextStation() {
+        return distanceToNextStation;
+    }
+
     public void setOnStation(boolean onStation) {
         this.onStation = onStation;
     }
@@ -99,9 +109,22 @@ public class TrainSet extends Thread{
         this.nextStation = nextStation;
     }
 
+    public String get_id(){
+        return id;
+    }
+
+    public PanelController getPanelController() {
+        return panelController;
+    }
+
+    public void setPanelController(PanelController panelController) {
+        this.panelController = panelController;
+    }
+
     @Override
     public void run() {
         try {
+
             while (!Thread.interrupted()) {
                 locomotive.setTimeInRoad(locomotive.getTimeInRoad() + 1);
                 translate();
@@ -219,12 +242,14 @@ public class TrainSet extends Thread{
         }
         else {
             System.out.println(id + " arrived at last station " + nextStation);
-            timeToWait = 30000;
+            timeToWait = 5000;
             startingStation = lastStation;
             lastStationFun();
             calculateRoad();
         }
 
+        panelController.updateLabel(this);
+        SwingUtilities.invokeLater(()->myTable.repaint());
         try {
             Thread.sleep(timeToWait);
         } catch (InterruptedException e) {
@@ -331,6 +356,8 @@ public class TrainSet extends Thread{
         double nextStation = Math.round(positionToNextStation/(double)distanceToNextStation*100);
         System.out.println(id + ": all distance traveled (beginning, end): " + distanceToEnd + "%; " +
                 "distance traveled to next station: " + nextStation + "%");
+
+//        panelController.updateRoad(nextStation);
     }
 
     void lastStationFun()
@@ -355,6 +382,8 @@ public class TrainSet extends Thread{
             nextStation = keys.get(index);
             distanceToNextStation = stations.get(nextStation);
         }
+
+
     }
 
     public void calculateRoad()
@@ -403,6 +432,9 @@ public class TrainSet extends Thread{
         int calculation = (int) (locomotive.getSpeed() * locomotive.getTimeInRoad()/6);
         currentPosition = calculation;
         positionToNextStation = calculation;
+
+
+
         if(positionToNextStation/distanceToNextStation > 1)
             positionToNextStation = distanceToNextStation;
 
@@ -414,6 +446,8 @@ public class TrainSet extends Thread{
                 "km/h "+ positionToNextStation);
         travelInfo();
     }
+
+
 
 
     @Override
